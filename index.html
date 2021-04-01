@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+	<title>Travelling Salesman Problem</title>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+
+<body>
+	<div class="container">
+		<div class="page-header">
+			<h1>Tìm đường nhắn nhất khi đi du lich</h1>
+			<h5>
+				<i>Trương Tiến Dũng, Nguyễn MInh Châu</i>
+			</h5>
+		</div>
+
+		<p>
+			<p id="mapParagraph">
+				<h2>Chọn các điểm muốn đến</h2>
+				<div id="map"></div>
+			</p>
+			<button id="btnCalculate" class="btn btn-primary">Tình toán lộ trình</button>
+		</p>
+		
+		<p id="solution"></p>
+		<div style="display: none">
+		<p>
+			<hr class="divider">
+			<h2>Danh sách vị trí</h2>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">ID</th>
+						<th scope="col">Tên</th>
+						<th scope="col">Kinh độ</th>
+						<th scope="col">Vĩ độ</th>
+					</tr>
+				</thead>
+				<tbody>
+
+				</tbody>
+			</table>
+		</p>
+
+
+		<button id="btnRemoveAll" class="btn btn-danger"></button>
+
+		<p>
+			<hr class="divider">
+			<h2>Thêm</h2>
+			<div class="input-group">
+				<span class="input-group-btn">
+					<span class="btn btn-primary btn-file">
+						Browse&hellip;
+						<input type="file" id="fileChooser" single>
+					</span>
+				</span>
+				<input type="text" class="form-control" readonly>
+			</div>
+		</p>
+
+		<p>
+			<button id="btnImport" class="btn btn-info">Thêm</button>
+		</p>
+
+		<p>
+			<hr class="divider">
+			<button id="btnToMap" class="btn btn-default"></button>
+		</p>
+</div>
+		<script src="js/keys.js"></script>
+		<script>
+			var googleMapsApiUrl = 'https://maps.googleapis.com/maps/api/js?key=' + "AIzaSyA8mhHCV2jFCOSzT98mXwSY3-9E-r-_81E" + '&callback=initMap&libraries=geometry';
+			$.getScript(googleMapsApiUrl);
+		</script>
+		<script src="js/jquery.number.min.js"></script>
+		<script src="js/solution.js"></script>
+		<script src="js/tsp.js"></script>
+		<script src="js/functions.js"></script>
+		<script>
+			$(document).on('change', '.btn-file :file', function () {
+				var input = $(this),
+					numFiles = input.get(0).files ? input.get(0).files.length : 1,
+					label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+				input.trigger('fileselect', [numFiles, label]);
+			});
+
+			$(document).ready(function () {
+
+				$("#btnToMap").click(function () {
+					$("html, body").animate({
+						scrollTop: 0
+					}, 500);
+				});
+
+				$('table').on('click', 'tr button.remove', function (e) {
+					e.preventDefault();
+
+					var rowId = $(this).closest('tr').find('th').attr('id');
+					removeMarker(rowId);
+
+					$(this).closest('tr').remove();
+					renumberRows();
+				});
+
+				$('#btnCalculate').click(function () {
+					calculate();
+				});
+
+				$('#btnImport').click(function () {
+					importLocations();
+				});
+
+				$('#btnRemoveAll').click(function () {
+					removeAllMarkers();
+				});
+
+				$('.btn-file :file').on('fileselect', function (event, numFiles, label) {
+					var input = $(this).parents('.input-group').find(':text'),
+						log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+					if (input.length) {
+						input.val(log);
+					} else {
+						if (log) alert(log);
+					}
+				});
+
+			});
+		</script>
+	</div>
+</body>
+
+</html>
